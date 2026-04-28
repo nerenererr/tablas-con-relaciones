@@ -27,7 +27,7 @@ public class PeliculaDao {
         }
     }
 
-    public void actualizarPelicula(Pelicula peli) {
+    public void actualizarPelicula(Pelicula peli, int id) {
         String sql = "UPDATE peliculas SET titulo = ?, genero = ?, duracion = ?, presupuesto = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement ps = conn.prepareStatement(sql)) {
