@@ -11,128 +11,113 @@ public class ActorDAO {
     private String user = "root";
     private String password = "1234";
 
-    public void insertarActor(Actor actor) {
-        String sql = "INSERT INTO actores (nombre, nacionalidad, edad) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    public int insertarActor(Actor actor) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "INSERT INTO actores (nombre, nacionalidad, edad) VALUES (?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, actor.getNombre());
+            pstmt.setString(2, actor.getNacionalidad());
+            pstmt.setInt(3, actor.getEdad());
+            pstmt.executeUpdate();
 
-            ps.setString(1, actor.getNombre());
-            ps.setString(2, actor.getNacionalidad());
-            ps.setInt(3, actor.getEdad());
-            ps.executeUpdate();
-
-            ResultSet rs = ps.getGeneratedKeys();
+            ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                actor.setId(rs.getInt(1));
+                return rs.getInt(1);
             }
-
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
+        return -1;
     }
 
-    public void actualizarActor(Actor actor) {
-        String sql = "UPDATE actores SET nombre = ?, nacionalidad = ?, edad = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, actor.getNombre());
-            ps.setString(2, actor.getNacionalidad());
-            ps.setInt(3, actor.getEdad());
-            ps.setInt(4, actor.getId());
-            ps.executeUpdate();
-
+    public void actualizarActor(Actor actor, int id) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "UPDATE actores SET nombre = ?, nacionalidad = ?, edad = ? WHERE id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, actor.getNombre());
+            pstmt.setString(2, actor.getNacionalidad());
+            pstmt.setInt(3, actor.getEdad());
+            pstmt.setInt(4, id);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     public void eliminarActor(int id) {
-        String sql = "DELETE FROM actores WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-            ps.executeUpdate();
-
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "DELETE FROM actores WHERE id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     public void asignarActorAPelicula(int actorId, int peliculaId, String personaje) {
-        String sql = "INSERT INTO reparto (actor_id, pelicula_id, personaje) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, actorId);
-            ps.setInt(2, peliculaId);
-            ps.setString(3, personaje);
-            ps.executeUpdate();
-
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "INSERT INTO reparto (actor_id, pelicula_id, personaje) VALUES (?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, actorId);
+            pstmt.setInt(2, peliculaId);
+            pstmt.setString(3, personaje);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     public void eliminarActorDePelicula(int actorId, int peliculaId) {
-        String sql = "DELETE FROM reparto WHERE actor_id = ? AND pelicula_id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, actorId);
-            ps.setInt(2, peliculaId);
-            ps.executeUpdate();
-
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "DELETE FROM reparto WHERE actor_id = ? AND pelicula_id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, actorId);
+            pstmt.setInt(2, peliculaId);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     public List<String> obtenerActoresPorNacionalidad() {
-        String sql = "SELECT nacionalidad, COUNT(*) AS total " +
-                "FROM actores GROUP BY nacionalidad ORDER BY total DESC";
         List<String> resultado = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "SELECT nacionalidad, COUNT(*) AS total " +
+                    "FROM actores GROUP BY nacionalidad ORDER BY total DESC";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                resultado.add("Nacionalidad: " + rs.getString("nacionalidad") +
-                        " | Total: " + rs.getInt("total"));
+                resultado.add("Nacionalidad: " + rs.getString("nacionalidad") + " | Total: " + rs.getInt("total"));
             }
-
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
         return resultado;
     }
 
     public double obtenerEdadMedia() {
-        String sql = "SELECT AVG(edad) AS edad_media FROM actores";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "SELECT AVG(edad) AS edad_media FROM actores";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getDouble("edad_media");
             }
-
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
         return 0;
     }
 
     public List<Actor> obtenerActoresSinPelicula() {
-        String sql = "SELECT a.id, a.nombre, a.nacionalidad, a.edad " +
-                "FROM actores a LEFT JOIN reparto r ON a.id = r.actor_id " +
-                "WHERE r.actor_id IS NULL";
         List<Actor> actores = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "SELECT a.id, a.nombre, a.nacionalidad, a.edad " +
+                    "FROM actores a LEFT JOIN reparto r ON a.id = r.actor_id " +
+                    "WHERE r.actor_id IS NULL";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 actores.add(new Actor(
                         rs.getInt("id"),
@@ -141,9 +126,8 @@ public class ActorDAO {
                         rs.getInt("edad")
                 ));
             }
-
         } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
         return actores;
     }

@@ -8,30 +8,33 @@ public class Main {
         PeliculaDao peliDao = new PeliculaDao();
         ActorDAO actorDao = new ActorDAO();
 
-        Pelicula nuevaPelicula = new Pelicula( "Todo sobre mi madre", "Drama", 101, 4500000);
+        Pelicula nuevaPelicula = new Pelicula("Todo sobre mi madre", "Drama", 101, 4500000);
         Actor actor = new Actor("Antonia San Juan", "España", 64);
-        /*
-        peliDao.insertarPelicula(nuevaPelicula);
-        System.out.println("Película añadida");
-        nuevaPelicula.setPresupuesto(4550000);
-        peliDao.actualizarPelicula(nuevaPelicula, 11);
-        System.out.println("Datos actualizados");
-        peliDao.eliminarPelicula(11);
-        System.out.println("Película eliminada");
 
-        actorDao.insertarActor(actor);
-        System.out.println("Actor insertado: " + actor);
-        actor.setEdad(65);
-        actorDao.actualizarActor(actor);
-        System.out.println("Actor actualizado: " + actor);
-        actorDao.eliminarActor(11);
-        System.out.println("Actor borrado");
+        //peliDao.insertarPelicula(nuevaPelicula);
+        //System.out.println("Película añadida");
 
-        actorDao.asignarActorAPelicula(1, 2, "Personaje de prueba");
-        System.out.println("Actor id=1 asignado a película id=2.");
-        actorDao.eliminarActorDePelicula(1, 2);
-        System.out.println("Actor id=1 eliminado de película id=2.");
-         */
+        //nuevaPelicula.setPresupuesto(4550000);
+        //peliDao.actualizarPelicula(nuevaPelicula, 11);
+        //System.out.println("Datos actualizados");
+
+        //peliDao.eliminarPelicula(11);
+        //System.out.println("Película eliminada");
+
+        //actorDao.insertarActor(actor);
+        //System.out.println("Actor insertado");
+
+        //actor.setEdad(65);
+        //actorDao.actualizarActor(actor, 11);
+        //System.out.println("Actor actualizado");
+
+        //actorDao.eliminarActor(11);
+        //System.out.println("Actor borrado");
+
+        //actorDao.asignarActorAPelicula(1, 2, "Personaje de prueba");
+        //System.out.println("Actor id=1 asignado a película id=2.");
+        //actorDao.eliminarActorDePelicula(1, 2);
+        //System.out.println("Actor id=1 eliminado de película id=2.");
 
         System.out.println("Todas las películas con total de actores:");
         System.out.println(peliDao.obtenerPeliculasYTotalActores());
@@ -64,8 +67,5 @@ public class Main {
         System.out.println("Actores sin película:");
         System.out.println(actorDao.obtenerActoresSinPelicula());
         System.out.println("₍^. .^₎⟆");
-
-
-
     }
 }
