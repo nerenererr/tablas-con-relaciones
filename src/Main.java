@@ -1,18 +1,12 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import dao.ActorDAO;
+import dao.PeliculaDao;
+import modelos.Pelicula;
 
 public class Main {
     public static void main(String[] args) {
-        String url = "jdbc:mysql://127.0.0.1:3306/productora";
-        String user = "root";
-        String pass = "";
+        PeliculaDao pelidao = new PeliculaDao();
+        ActorDAO actordao = new ActorDAO();
 
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
-            System.out.println("Conexión establecida");
-        } catch (SQLException e) {
-            System.out.println("Error de conexión "
-            + e.getMessage());
-        }
+        Pelicula nuevaPelicula = new Pelicula( "Todo sobre mi madre", "Drama", 101, 4500000);
     }
 }
